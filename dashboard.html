@@ -297,6 +297,22 @@ function monthSortKey(label){
   return new Date(+m[2],mo,1).getTime();
 }
 function monthLabelFromDate(dt){ return dt ? dt.toLocaleString("en-US",{month:"long",year:"numeric"}) : ""; }
+function deriveMonth(monthCell, fallbackDate){
+  if (monthCell instanceof Date && !isNaN(monthCell)) return monthLabelFromDate(monthCell);
+  if (typeof monthCell === "string"){
+    const t = monthCell.trim();
+    if (!t) return monthLabelFromDate(fallbackDate);
+    if (/^[A-Za-z]+\s+\d{4}$/.test(t)) return t;
+    const parsed = parseDate(t);
+    if (parsed) return monthLabelFromDate(parsed);
+    return monthLabelFromDate(fallbackDate);
+  }
+  if (typeof monthCell === "number" && Number.isInteger(monthCell) && monthCell >= 1 && monthCell <= 12){
+    const year = fallbackDate ? fallbackDate.getFullYear() : new Date().getFullYear();
+    return new Date(year, monthCell-1, 1).toLocaleString("en-US",{month:"long",year:"numeric"});
+  }
+  return monthLabelFromDate(fallbackDate);
+}
 function escapeHtml(s){return (s??"").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function escapeAttr(s){return escapeHtml(s).replace(/'/g,"&#39;");}
 function fmtNum(n){ if (n==null||isNaN(n)) return "—"; return n.toLocaleString(undefined,{maximumFractionDigits:0}); }
@@ -337,8 +353,7 @@ function normalizeProspect(r){
   const platform = mapVal(getCell(r,"Platform"), PLATFORM_MAP, "");
   const dest = mapVal(getCell(r,"Destination"), DEST_MAP, "");
   const reachDate = parseDate(getCell(r,"Reachout date  (for new onboards )","Reachout date","Reach out date"));
-  const monthStr = norm(getCell(r,"Month"));
-  const month = monthStr || monthLabelFromDate(reachDate);
+  const month = deriveMonth(getCell(r,"Month"), reachDate);
   const subRaw = norm(getCell(r,"Subscriber","Subscribers","Subs/Followers"));
   const subscribers = parseInt(subRaw.replace(/[^\d]/g,"")) || 0;
   return {
@@ -361,7 +376,7 @@ function normalizeVideo(r){
   const poc = norm(getCell(r,"POC name"));
   if (!poc) return null;
   const date = parseDate(getCell(r,"Date"));
-  const month = monthLabelFromDate(date);
+  const month = deriveMonth(getCell(r,"Month"), date);
   const channel = mapVal(getCell(r,"Channel"), PLATFORM_MAP, "");
   const dest = mapVal(getCell(r,"Destination Country","Destination"), DEST_MAP, "");
   const paidAffRaw = norm(getCell(r,"Paid/affiliate")).toLowerCase();
