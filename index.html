@@ -277,7 +277,14 @@ function monthSortKey(label){
   const mo=MONTH_NUM[m[1].toLowerCase()]; if (mo==null) return 0;
   return new Date(+m[2],mo,1).getTime();
 }
-function monthLabelFromDate(dt){ return dt ? dt.toLocaleString("en-US",{month:"long",year:"numeric"}) : ""; }
+function monthLabelFromDate(dt){
+  if (!dt) return "";
+  const y = dt.getFullYear();
+  // Sanity guard: reject typos (e.g. year '206' / '2024' off by typo) and far-future dates.
+  // Keeps months filter clean — bad rows still appear in the data table.
+  if (y < 2024 || y > 2030) return "";
+  return dt.toLocaleString("en-US",{month:"long",year:"numeric"});
+}
 function deriveMonth(monthCell, fallbackDate){
   if (monthCell instanceof Date && !isNaN(monthCell)) return monthLabelFromDate(fixXlsxDate(monthCell));
   if (typeof monthCell === "string"){
