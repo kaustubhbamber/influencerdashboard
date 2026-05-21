@@ -257,8 +257,14 @@ function mapVal(v, dict, fallback){
   if (!k) return fallback ?? "";
   return dict[k] ?? titleCase(v.trim());
 }
+function fixXlsxDate(dt){
+  // SheetJS returns Excel dates ~10s short of midnight (floating-point quirk).
+  // Nudge them back into the correct day so 'Feb 1' doesn't become 'Jan 31 23:59:50'.
+  if (!(dt instanceof Date) || isNaN(dt)) return dt;
+  return new Date(dt.getTime() + 30000);
+}
 function parseDate(s){
-  if (s instanceof Date) return isNaN(s) ? null : s;
+  if (s instanceof Date) return isNaN(s) ? null : fixXlsxDate(s);
   s = norm(s); if (!s) return null;
   let m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
   if (m){ let [_,mo,d,y]=m; y=y.length===2?"20"+y:y; const dt=new Date(+y,+mo-1,+d); return isNaN(dt)?null:dt; }
@@ -273,7 +279,7 @@ function monthSortKey(label){
 }
 function monthLabelFromDate(dt){ return dt ? dt.toLocaleString("en-US",{month:"long",year:"numeric"}) : ""; }
 function deriveMonth(monthCell, fallbackDate){
-  if (monthCell instanceof Date && !isNaN(monthCell)) return monthLabelFromDate(monthCell);
+  if (monthCell instanceof Date && !isNaN(monthCell)) return monthLabelFromDate(fixXlsxDate(monthCell));
   if (typeof monthCell === "string"){
     const t = monthCell.trim();
     if (!t) return monthLabelFromDate(fallbackDate);
