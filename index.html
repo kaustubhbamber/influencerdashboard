@@ -280,9 +280,9 @@ function monthSortKey(label){
 function monthLabelFromDate(dt){
   if (!dt) return "";
   const y = dt.getFullYear();
-  // Sanity guard: reject typos (e.g. year '206' / '2024' off by typo) and far-future dates.
-  // Keeps months filter clean — bad rows still appear in the data table.
-  if (y < 2024 || y > 2030) return "";
+  // Sanity guard: reject typos like '206' / 'Feburuary 19,2027' which V8 parses leniently.
+  // Window: 2024 .. current year. Bad rows still appear in the data table.
+  if (y < 2024 || y > new Date().getFullYear()) return "";
   return dt.toLocaleString("en-US",{month:"long",year:"numeric"});
 }
 function deriveMonth(monthCell, fallbackDate){
