@@ -1163,14 +1163,18 @@ const empty = document.getElementById("empty-state");
 empty.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) ingestFile(f); });
 
 async function loadSample(){
+  document.getElementById("load-status").textContent = "Loading workbook…";
   try {
-    document.getElementById("load-status").textContent = "Loading workbook…";
     let res = await fetch(SAMPLE_XLSX);
     if (res.ok){ const buf = await res.arrayBuffer(); ingestXlsx(buf); return; }
     res = await fetch(SAMPLE_CSV);
     if (res.ok){ const text = await res.text(); ingestCsv(text); return; }
-    throw new Error("Sample not found over HTTP. If you opened this with file://, use Upload.");
-  } catch (e) { alert(e.message); }
+    document.getElementById("load-status").textContent = "";
+    alert("No bundled workbook here — use the Upload button to load your .xlsx or .csv.");
+  } catch (e) {
+    document.getElementById("load-status").textContent = "";
+    alert("Couldn't load the bundled workbook. Use the Upload button instead.");
+  }
 }
 document.getElementById("load-sample").addEventListener("click", loadSample);
 document.getElementById("load-sample-2").addEventListener("click", loadSample);

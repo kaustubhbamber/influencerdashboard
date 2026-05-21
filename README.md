@@ -21,10 +21,12 @@ cd influencerdashboard
 
 # serve it locally (data files are git-ignored, so place your .xlsx in this folder)
 python3 -m http.server 8765
-# then open http://localhost:8765/dashboard.html
+# then open http://localhost:8765/
 ```
 
-Or just **double-click `dashboard.html`** to open in a browser and use the **Upload** button to load any workbook. (The "Load current workbook" auto-loader only works over `http://`, not `file://`, due to browser security.)
+**Deployed version:** https://kaustubhbamber.github.io/influencerdashboard/ — upload your workbook through the Upload button. No data is sent to a server; parsing happens entirely in your browser.
+
+Or **double-click `index.html`** locally and use the Upload button. (The "Load current workbook" auto-loader only works over `http://`, not `file://`, due to browser security.)
 
 ## Why git-ignore the data
 
