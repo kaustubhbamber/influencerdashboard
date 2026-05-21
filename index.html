@@ -263,12 +263,37 @@ function fixXlsxDate(dt){
   if (!(dt instanceof Date) || isNaN(dt)) return dt;
   return new Date(dt.getTime() + 30000);
 }
+const MONTH_NAMES_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function fixMonthSpelling(s){
+  // Fuzzy-correct misspelled month names like 'Feburuary', 'Janurary', 'Marh'.
+  return s.replace(/\b([A-Za-z]{3,})/g, (match) => {
+    const lower = match.toLowerCase();
+    for (const m of MONTH_NAMES_FULL){
+      const ml = m.toLowerCase();
+      if (lower.startsWith(ml.substring(0,3)) && Math.abs(lower.length - ml.length) <= 3) return m;
+    }
+    return match;
+  });
+}
+function correctTypoYear(dt){
+  // If parsed year is outside [2024, current year], assume typo and remap to most
+  // likely intended year (current year, or previous if that produces a future date).
+  if (!(dt instanceof Date) || isNaN(dt)) return null;
+  const now = new Date();
+  const y = dt.getFullYear();
+  if (y >= 2024 && y <= now.getFullYear()) return dt;
+  const corrected = new Date(dt);
+  corrected.setFullYear(now.getFullYear());
+  if (corrected > now) corrected.setFullYear(now.getFullYear() - 1);
+  return corrected;
+}
 function parseDate(s){
-  if (s instanceof Date) return isNaN(s) ? null : fixXlsxDate(s);
+  if (s instanceof Date) return isNaN(s) ? null : correctTypoYear(fixXlsxDate(s));
   s = norm(s); if (!s) return null;
-  let m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-  if (m){ let [_,mo,d,y]=m; y=y.length===2?"20"+y:y; const dt=new Date(+y,+mo-1,+d); return isNaN(dt)?null:dt; }
-  const dt=new Date(s); return isNaN(dt)?null:dt;
+  const fixed = fixMonthSpelling(s);
+  let m = fixed.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (m){ let [_,mo,d,y]=m; y=y.length===2?"20"+y:y; const dt=new Date(+y,+mo-1,+d); return correctTypoYear(dt); }
+  const dt=new Date(fixed); return isNaN(dt) ? null : correctTypoYear(dt);
 }
 function monthSortKey(label){
   if (!label) return 0;
@@ -286,7 +311,7 @@ function monthLabelFromDate(dt){
   return dt.toLocaleString("en-US",{month:"long",year:"numeric"});
 }
 function deriveMonth(monthCell, fallbackDate){
-  if (monthCell instanceof Date && !isNaN(monthCell)) return monthLabelFromDate(fixXlsxDate(monthCell));
+  if (monthCell instanceof Date && !isNaN(monthCell)) return monthLabelFromDate(correctTypoYear(fixXlsxDate(monthCell)));
   if (typeof monthCell === "string"){
     const t = monthCell.trim();
     if (!t) return monthLabelFromDate(fallbackDate);
