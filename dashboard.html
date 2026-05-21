@@ -66,7 +66,6 @@
   <div id="tab-bar" class="hidden border-b border-zinc-200 flex gap-1">
     <button class="tab-btn active" data-tab="prospects">Prospects <span class="ml-1 text-[10px] bg-zinc-100 text-zinc-600 px-1.5 py-0.5 rounded-full" data-count="prospects">0</span></button>
     <button class="tab-btn" data-tab="videos">Videos Live <span class="ml-1 text-[10px] bg-zinc-100 text-zinc-600 px-1.5 py-0.5 rounded-full" data-count="videos">0</span></button>
-    <button class="tab-btn" data-tab="targets">Targets vs Actuals</button>
   </div>
 
   <!-- ====================== PROSPECTS TAB ====================== -->
@@ -202,30 +201,6 @@
     </section>
   </div>
 
-  <!-- ====================== TARGETS TAB ====================== -->
-  <div data-tab-content="targets" class="hidden space-y-6">
-    <section class="bg-white rounded-xl border border-zinc-200 p-4">
-      <div class="flex items-center justify-between mb-2">
-        <div><h3 class="font-semibold text-sm">Targets vs Actuals</h3><p class="text-xs text-zinc-500">monthly reach-outs target (120/mo · 10/day) · onboards target (4/mo)</p></div>
-        <div class="flex items-center gap-2">
-          <label class="text-xs text-zinc-600">Month</label>
-          <select id="target-month" class="text-sm border border-zinc-300 rounded px-2 py-1"></select>
-        </div>
-      </div>
-      <div class="overflow-x-auto"><table class="w-full text-xs" id="tbl-targets"></table></div>
-    </section>
-
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="bg-white rounded-xl border border-zinc-200 p-4">
-        <div class="mb-2"><h3 class="font-semibold text-sm">Reach-out target attainment</h3><span class="text-xs text-zinc-500">selected month · actual ÷ target</span></div>
-        <div class="h-[420px]"><canvas id="tch-reach"></canvas></div>
-      </div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4">
-        <div class="mb-2"><h3 class="font-semibold text-sm">Onboarding target attainment</h3><span class="text-xs text-zinc-500">selected month · onboards vs goal of 4</span></div>
-        <div class="h-[420px]"><canvas id="tch-onboard"></canvas></div>
-      </div>
-    </section>
-  </div>
 </main>
 
 <footer class="max-w-[1600px] mx-auto px-6 py-6 text-xs text-zinc-400">
@@ -524,7 +499,6 @@ function switchTab(name){
   document.querySelectorAll("[data-tab-content]").forEach(el => el.classList.toggle("hidden", el.dataset.tabContent !== name));
   if (name === "prospects") { buildProspectFilters(); applyProspectFilters(); }
   if (name === "videos")    { buildVideoFilters();    applyVideoFilters(); }
-  if (name === "targets")   { renderTargets(); }
 }
 document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
@@ -1126,73 +1100,6 @@ function renderVideoTable(rows){
   const tp = Math.max(1, Math.ceil(rows.length / state.pageSize));
   document.getElementById("table-pageinfo-videos").textContent = `Page ${state.page.videos+1} of ${tp}`;
 }
-
-// ============================================================
-// TARGETS TAB
-// ============================================================
-function renderTargets(){
-  const sel = document.getElementById("target-month");
-  // Use prospect months (these are reach-out months)
-  const months = [...new Set(state.datasets.prospects.map(r => r.month).filter(Boolean))].sort((a,b)=>monthSortKey(b)-monthSortKey(a));
-  if (!sel.options.length || sel.options.length !== months.length){
-    sel.innerHTML = months.map(m => `<option value="${escapeAttr(m)}">${escapeHtml(m)}</option>`).join("");
-  }
-  const month = sel.value || months[0];
-  if (!sel.value && month) sel.value = month;
-  const monthRows = state.datasets.prospects.filter(r => r.month === month);
-  const pocs = [...new Set(state.datasets.prospects.map(r => r.poc))].sort();
-  const data = pocs.map(p => {
-    const sub = monthRows.filter(r => r.poc === p);
-    const reach = sub.length;
-    const onb = sub.filter(r => r.status === "Onboarded — Live").length;
-    const reachTarget = (state.datasets.targets && state.datasets.targets.overrides[p]) || TARGET_REACHOUTS;
-    const reachPct = reachTarget ? (reach/reachTarget)*100 : 0;
-    const onbPct = TARGET_ONBOARDS ? (onb/TARGET_ONBOARDS)*100 : 0;
-    return { poc:p, reach, reachTarget, reachPct, onb, onbTarget:TARGET_ONBOARDS, onbPct };
-  }).filter(r => r.reach>0 || r.onb>0).sort((a,b)=>b.reachPct-a.reachPct);
-
-  // Table
-  document.getElementById("tbl-targets").innerHTML = `
-    <thead class="bg-zinc-50 text-zinc-600 uppercase tracking-wide">
-      <tr><th class="px-3 py-2 text-left">POC</th><th class="px-3 py-2 text-right">Reach-outs</th><th class="px-3 py-2 text-right">Target</th><th class="px-3 py-2 text-left">Attainment</th><th class="px-3 py-2 text-right">Onboards</th><th class="px-3 py-2 text-right">Target</th><th class="px-3 py-2 text-left">Attainment</th></tr>
-    </thead><tbody class="divide-y divide-zinc-100">
-      ${data.map(d => {
-        const reachBar = Math.min(d.reachPct, 200);
-        const onbBar = Math.min(d.onbPct, 200);
-        const reachColor = d.reachPct >= 100 ? "bg-emerald-500" : d.reachPct >= 70 ? "bg-amber-500" : "bg-rose-500";
-        const onbColor = d.onbPct >= 100 ? "bg-emerald-500" : d.onbPct >= 50 ? "bg-amber-500" : "bg-rose-500";
-        return `<tr>
-          <td class="px-3 py-2 font-medium">${escapeHtml(d.poc)}</td>
-          <td class="px-3 py-2 text-right tabular-nums">${d.reach}</td>
-          <td class="px-3 py-2 text-right text-zinc-500 tabular-nums">${d.reachTarget}</td>
-          <td class="px-3 py-2"><div class="flex items-center gap-2"><div class="flex-1 bg-zinc-100 rounded h-2 overflow-hidden"><div class="${reachColor} h-full" style="width:${reachBar/2}%"></div></div><span class="text-xs w-12 text-right tabular-nums">${d.reachPct.toFixed(0)}%</span></div></td>
-          <td class="px-3 py-2 text-right tabular-nums">${d.onb}</td>
-          <td class="px-3 py-2 text-right text-zinc-500 tabular-nums">${d.onbTarget}</td>
-          <td class="px-3 py-2"><div class="flex items-center gap-2"><div class="flex-1 bg-zinc-100 rounded h-2 overflow-hidden"><div class="${onbColor} h-full" style="width:${onbBar/2}%"></div></div><span class="text-xs w-12 text-right tabular-nums">${d.onbPct.toFixed(0)}%</span></div></td>
-        </tr>`;
-      }).join("")}
-    </tbody>`;
-
-  // Reach-out chart
-  upsertChart("tch-reach", {
-    type:"bar",
-    data:{ labels:data.map(d=>d.poc), datasets:[
-      { label:"Actual", data:data.map(d=>d.reach), backgroundColor:"#6366f1", borderRadius:4 },
-      { label:"Target", data:data.map(d=>d.reachTarget), backgroundColor:"#e4e4e7", borderRadius:4 },
-    ]},
-    options:{ indexAxis:"y", plugins:{ legend:{position:"bottom"} }, scales:{ x:{beginAtZero:true} } },
-  });
-  // Onboard chart
-  upsertChart("tch-onboard", {
-    type:"bar",
-    data:{ labels:data.map(d=>d.poc), datasets:[
-      { label:"Actual", data:data.map(d=>d.onb), backgroundColor:"#16a34a", borderRadius:4 },
-      { label:"Target", data:data.map(d=>d.onbTarget), backgroundColor:"#e4e4e7", borderRadius:4 },
-    ]},
-    options:{ indexAxis:"y", plugins:{ legend:{position:"bottom"} }, scales:{ x:{beginAtZero:true} } },
-  });
-}
-document.getElementById("target-month").addEventListener("change", renderTargets);
 
 // ============================================================
 // SEARCH / PAGE / RESET / EXPORT wiring
