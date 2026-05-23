@@ -87,7 +87,7 @@
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Pipeline funnel</h3><span class="text-xs text-zinc-500">prospects by stage</span></div><div class="h-[260px]"><canvas id="ch-funnel"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Outreach over time</h3><span class="text-xs text-zinc-500">by month</span></div><div class="h-[260px]"><canvas id="ch-month"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-8"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Performance by POC</h3><span class="text-xs text-zinc-500">click a bar to drill in</span></div><div class="h-[380px]"><canvas id="ch-poc"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-8"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Performance by POC</h3><span class="text-xs text-zinc-500">click a bar to drill in</span></div><div class="h-[520px]"><canvas id="ch-poc"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform mix</h3><span class="text-xs text-zinc-500">share of outreach</span></div><div class="h-[380px]"><canvas id="ch-platform"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top destinations</h3><span class="text-xs text-zinc-500">where influencers are sent</span></div><div class="h-[280px]"><canvas id="ch-dest"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top source countries</h3><span class="text-xs text-zinc-500">overall count</span></div><div class="h-[280px]"><canvas id="ch-source"></canvas></div></div>
@@ -763,7 +763,8 @@ function renderProspectCharts(rows){
       { label:"Contacted", data:pocList.map(p=>p.contacted), backgroundColor:"#94a3b8" },
       { label:"Lost", data:pocList.map(p=>p.lost), backgroundColor:"#dc2626" },
     ]},
-    options:{ plugins:{legend:{position:"bottom"}}, scales:{ x:{stacked:true}, y:{stacked:true, beginAtZero:true} },
+    options:{ indexAxis:"y", plugins:{legend:{position:"bottom"}},
+      scales:{ x:{stacked:true, beginAtZero:true}, y:{stacked:true, ticks:{autoSkip:false}} },
       onClick: chartClickFilter("prospects","poc","filters-prospects"), onHover: cursorHover() },
   });
   // platform
