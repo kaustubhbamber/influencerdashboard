@@ -89,9 +89,9 @@
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Outreach over time</h3><span class="text-xs text-zinc-500">by month</span></div><div class="h-[260px]"><canvas id="ch-month"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-8"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Performance by POC</h3><span class="text-xs text-zinc-500">click a bar to drill in</span></div><div class="h-[520px]"><canvas id="ch-poc"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform mix</h3><span class="text-xs text-zinc-500">share of outreach</span></div><div class="h-[380px]"><canvas id="ch-platform"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top destinations</h3><span class="text-xs text-zinc-500">where influencers are sent</span></div><div class="h-[280px]"><canvas id="ch-dest"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top destinations</h3></div><div class="h-[280px]"><canvas id="ch-dest"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top source countries</h3><span class="text-xs text-zinc-500">overall count</span></div><div class="h-[280px]"><canvas id="ch-source"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source country → onboarded</h3><span class="text-xs text-zinc-500">stacked by outcome · top 15</span></div><div class="h-[420px]"><canvas id="ch-source-onboard"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source → onboarded</h3><div class="flex gap-2"><button id="toggle-source-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-white hover:bg-zinc-100" data-view="country">By Country</button><button id="toggle-region-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-indigo-600 text-white hover:bg-indigo-700" data-view="region">By Region</button></div></div><div class="h-[420px]"><canvas id="ch-source-onboard"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-5"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Month-over-month growth</h3><span class="text-xs text-zinc-500">% change vs previous month</span></div><div class="h-[420px]"><canvas id="ch-mom"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Conversion rate by POC</h3><span class="text-xs text-zinc-500">min 30 prospects</span></div><div class="h-[280px]"><canvas id="ch-conv"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-5"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Why we lose deals</h3><span class="text-xs text-zinc-500">lost reasons</span></div><div class="h-[280px]"><canvas id="ch-lost"></canvas></div></div>
@@ -225,7 +225,7 @@ const PLATFORM_MAP = {
   "linkedin":"LinkedIn","telegram":"Telegram","facebook":"Facebook","fb":"Facebook",
 };
 const DEST_MAP = {
-  "aus":"Australia","australia":"Australia","uk":"UK","uk doms":"UK Doms","uk dom":"UK Doms",
+  "aus":"Australia","australia":"Australia","uk":"UK","uk doms":"UK","uk dom":"UK",
   "usa":"USA","us":"USA","united states":"USA","germany":"Germany","ireland":"Ireland",
   "canada":"Canada","france":"France","spain":"Spain","new zealand":"New Zealand","nz":"New Zealand",
   "singapore":"Singapore","all":"All","generic":"Generic","others":"Others","rest of the world":"Rest of World",
@@ -329,6 +329,7 @@ function deriveMonth(monthCell, fallbackDate){
 function escapeHtml(s){return (s??"").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function escapeAttr(s){return escapeHtml(s).replace(/'/g,"&#39;");}
 function fmtNum(n){ if (n==null||isNaN(n)) return "—"; return n.toLocaleString(undefined,{maximumFractionDigits:0}); }
+function fmtDecimal(n){ if (n==null||isNaN(n)||!isFinite(n)) return "—"; return n.toFixed(2); }
 function fmtINR(n){ if (n==null||isNaN(n)||!isFinite(n)) return "—"; if (n>=1e7) return "₹"+(n/1e7).toFixed(2)+"Cr"; if (n>=1e5) return "₹"+(n/1e5).toFixed(2)+"L"; if (n>=1000) return "₹"+(n/1000).toFixed(1)+"K"; return "₹"+Math.round(n).toLocaleString(); }
 function safeDiv(a,b){ return b ? a/b : 0; }
 
@@ -339,6 +340,7 @@ const state = {
   page: { prospects: 0, videos: 0 },
   pageSize: 50,
   charts: {},
+  sourceView: "region", // "country" or "region"
   filters: {
     prospects: { poc:new Set(), month:new Set(), platform:new Set(), destination:new Set(), source:new Set(), status:new Set(), search:"" },
     videos:    { poc:new Set(), month:new Set(), channel:new Set(), destination:new Set(), source:new Set(), paidAff:new Set(), quality:new Set(), search:"" },
@@ -374,7 +376,20 @@ function normalizeProspect(r){
   const reachDate = parseDate(getCell(r,"Reachout date  (for new onboards )","Reachout date","Reach out date"));
   const month = deriveMonth(getCell(r,"Month"), reachDate);
   const subRaw = norm(getCell(r,"Subscriber","Subscribers","Subs/Followers"));
-  const subscribers = parseInt(subRaw.replace(/[^\d]/g,"")) || 0;
+  let subscribers = 0;
+  if (subRaw) {
+    const match = subRaw.match(/^([\d.]+)\s*([kmb]?)$/i);
+    if (match) {
+      const num = parseFloat(match[1]);
+      const suffix = match[2].toLowerCase();
+      if (suffix === 'k') subscribers = Math.round(num * 1000);
+      else if (suffix === 'm') subscribers = Math.round(num * 1000000);
+      else if (suffix === 'b') subscribers = Math.round(num * 1000000000);
+      else subscribers = Math.round(num);
+    } else {
+      subscribers = parseInt(subRaw.replace(/[^\d]/g,"")) || 0;
+    }
+  }
   return {
     poc: poc ? titleCase(poc) : "—",
     month, monthSort: monthSortKey(month),
@@ -673,7 +688,7 @@ const PROSPECT_FILTERS = {
   poc:        { label:"POC", field:"poc", set:null },
   month:      { label:"Month", field:"month", set:null, sort:(a,b)=>monthSortKey(a)-monthSortKey(b) },
   platform:   { label:"Platform", field:"platform", set:null },
-  destination:{ label:"Destination", field:"destination", set:null },
+  destination:{ label:"Destination Country", field:"destination", set:null },
   source:     { label:"Source Country", field:"source", set:null },
   status:     { label:"Status", field:"status", set:null },
 };
@@ -702,6 +717,32 @@ function applyProspectFilters(){
   state.page.prospects = 0;
   renderProspectTable(rows);
 }
+
+// Toggle event listeners for source view
+document.addEventListener("DOMContentLoaded", () => {
+  const countryBtn = document.getElementById("toggle-source-view");
+  const regionBtn = document.getElementById("toggle-region-view");
+  
+  if (countryBtn && regionBtn) {
+    countryBtn.addEventListener("click", () => {
+      state.sourceView = "country";
+      countryBtn.classList.remove("bg-white", "hover:bg-zinc-100");
+      countryBtn.classList.add("bg-indigo-600", "text-white", "hover:bg-indigo-700");
+      regionBtn.classList.remove("bg-indigo-600", "text-white", "hover:bg-indigo-700");
+      regionBtn.classList.add("bg-white", "hover:bg-zinc-100");
+      if (state.tab === "prospects") applyProspectFilters();
+    });
+    
+    regionBtn.addEventListener("click", () => {
+      state.sourceView = "region";
+      regionBtn.classList.remove("bg-white", "hover:bg-zinc-100");
+      regionBtn.classList.add("bg-indigo-600", "text-white", "hover:bg-indigo-700");
+      countryBtn.classList.remove("bg-indigo-600", "text-white", "hover:bg-indigo-700");
+      countryBtn.classList.add("bg-white", "hover:bg-zinc-100");
+      if (state.tab === "prospects") applyProspectFilters();
+    });
+  }
+});
 
 function renderProspectKPIs(rows){
   const total = rows.length;
@@ -774,7 +815,8 @@ function renderProspectCharts(rows){
       onClick: chartClickFilter("prospects","poc","filters-prospects"), onHover: cursorHover() },
   });
   // platform
-  const platformCounts = counts(rows,"platform").slice(0,8);
+  const allowedPlatforms = new Set(["YouTube", "TikTok", "Instagram", "Multi-platform"]);
+  const platformCounts = counts(rows,"platform").filter(p => allowedPlatforms.has(p[0]));
   upsertChart("ch-platform", {
     type:"doughnut",
     data:{ labels:platformCounts.map(p=>p[0]), datasets:[{ data:platformCounts.map(p=>p[1]),
@@ -798,30 +840,47 @@ function renderProspectCharts(rows){
     options:{ indexAxis:"y", scales:{ x:{beginAtZero:true} },
       onClick: chartClickFilter("prospects","source","filters-prospects"), onHover: cursorHover() },
   });
-  // source -> onboarded stacked
-  const sourceAgg = [...new Set(rows.map(r=>r.source))].map(s => {
-    const sub = rows.filter(r=>r.source===s);
-    return {
-      source:s, total:sub.length,
-      onb: sub.filter(r=>r.status==="Onboarded — Live").length,
-      wip: sub.filter(r=>r.status==="Onboarding WIP").length,
-      pipe: sub.filter(r=>r.status.startsWith("Follow up")||r.status==="Replied"||r.status==="In talks"||r.status==="High ask"||r.status==="Contacted").length,
-      lost: sub.filter(r=>r.status==="Lost").length,
-    };
-  }).filter(s=>s.total).sort((a,b)=>b.onb-a.onb||b.total-a.total).slice(0,15);
-  upsertChart("ch-source-onboard", {
-    type:"bar",
-    data:{ labels:sourceAgg.map(s=>s.source), datasets:[
-      { label:"Onboarded", data:sourceAgg.map(s=>s.onb), backgroundColor:"#16a34a" },
-      { label:"Onboarding WIP", data:sourceAgg.map(s=>s.wip), backgroundColor:"#34d399" },
-      { label:"In pipeline", data:sourceAgg.map(s=>s.pipe), backgroundColor:"#a78bfa" },
-      { label:"Lost", data:sourceAgg.map(s=>s.lost), backgroundColor:"#dc2626" },
-    ]},
-    options:{ indexAxis:"y", plugins:{ legend:{position:"bottom"},
-      tooltip:{ callbacks:{ afterLabel: ctx => { const s=sourceAgg[ctx.dataIndex]; return `Conv: ${s.total?((s.onb/s.total)*100).toFixed(1):"0"}% · Total ${s.total}`; } } } },
-      scales:{ x:{stacked:true, beginAtZero:true}, y:{stacked:true} },
-      onClick: chartClickFilter("prospects","source","filters-prospects"), onHover: cursorHover() },
-  });
+  // source -> onboarded stacked (country or region toggle)
+  const renderSourceOnboardChart = () => {
+    let sourceAgg;
+    if (state.sourceView === "region") {
+      sourceAgg = [...new Set(rows.map(r=>r.region).filter(r => r && r !== "—"))].map(s => {
+        const sub = rows.filter(r=>r.region===s);
+        return {
+          label:s, total:sub.length,
+          onb: sub.filter(r=>r.status==="Onboarded — Live").length,
+          wip: sub.filter(r=>r.status==="Onboarding WIP").length,
+          pipe: sub.filter(r=>r.status.startsWith("Follow up")||r.status==="Replied"||r.status==="In talks"||r.status==="High ask"||r.status==="Contacted").length,
+          lost: sub.filter(r=>r.status==="Lost").length,
+        };
+      }).filter(s=>s.total).sort((a,b)=>b.onb-a.onb||b.total-a.total).slice(0,15);
+    } else {
+      sourceAgg = [...new Set(rows.map(r=>r.source))].map(s => {
+        const sub = rows.filter(r=>r.source===s);
+        return {
+          label:s, total:sub.length,
+          onb: sub.filter(r=>r.status==="Onboarded — Live").length,
+          wip: sub.filter(r=>r.status==="Onboarding WIP").length,
+          pipe: sub.filter(r=>r.status.startsWith("Follow up")||r.status==="Replied"||r.status==="In talks"||r.status==="High ask"||r.status==="Contacted").length,
+          lost: sub.filter(r=>r.status==="Lost").length,
+        };
+      }).filter(s=>s.total).sort((a,b)=>b.onb-a.onb||b.total-a.total).slice(0,15);
+    }
+    upsertChart("ch-source-onboard", {
+      type:"bar",
+      data:{ labels:sourceAgg.map(s=>s.label), datasets:[
+        { label:"Onboarded", data:sourceAgg.map(s=>s.onb), backgroundColor:"#16a34a" },
+        { label:"Onboarding WIP", data:sourceAgg.map(s=>s.wip), backgroundColor:"#34d399" },
+        { label:"In pipeline", data:sourceAgg.map(s=>s.pipe), backgroundColor:"#a78bfa" },
+        { label:"Lost", data:sourceAgg.map(s=>s.lost), backgroundColor:"#dc2626" },
+      ]},
+      options:{ indexAxis:"y", plugins:{ legend:{position:"bottom"},
+        tooltip:{ callbacks:{ afterLabel: ctx => { const s=sourceAgg[ctx.dataIndex]; return `Conv: ${s.total?((s.onb/s.total)*100).toFixed(1):"0"}% · Total ${s.total}`; } } } },
+        scales:{ x:{stacked:true, beginAtZero:true}, y:{stacked:true} },
+        onClick: chartClickFilter("prospects","source","filters-prospects"), onHover: cursorHover() },
+    });
+  };
+  renderSourceOnboardChart();
   // MoM
   const monthSeries = monthCounts.map(([m,total]) => ({ month:m, total, onb: rows.filter(r=>r.month===m && r.status==="Onboarded — Live").length }));
   const momLabels=[], momReach=[], momOnb=[];
@@ -932,8 +991,8 @@ function renderVideoKPIs(rows){
   const k = [
     { label:"Videos live", value: rows.length.toLocaleString(), sub:`${new Set(rows.map(r=>r.partner.toLowerCase()).filter(Boolean)).size} unique partners` },
     { label:"Total spend", value: fmtINR(budget), sub:`${rows.filter(r=>r.budget>0).length} paid videos` },
-    { label:"Views", value: fmtNum(views), sub:`CPV ${fmtINR(cpv)}` },
-    { label:"Traffic", value: fmtNum(traffic), sub: views? ((traffic/views)*100).toFixed(2)+"% of views" : "" },
+    { label:"Views", value: fmtNum(views), sub:`CPV ₹${fmtDecimal(cpv)}` },
+    { label:"Traffic", value: fmtNum(traffic), sub: views && leads ? ((leads/traffic)*100).toFixed(2)+"% of traffic → leads" : "" },
     { label:"Leads", value: fmtNum(leads), sub:`CPL ${fmtINR(cpl)}`, color:"text-emerald-600" },
     { label:"Bookforms", value: fmtNum(bookforms), sub:`CPB ${fmtINR(cpb)}` },
     { label:"Bookings", value: fmtNum(bookings), sub: bookforms? ((bookings/bookforms)*100).toFixed(1)+"% of bookforms" : "", color:"text-indigo-600" },
@@ -1042,7 +1101,7 @@ function renderVideoCharts(rows){
         <td class="px-2 py-2 text-right">${fmtINR(c.bud)}</td>
         <td class="px-2 py-2 text-right">${fmtNum(c.vw)}</td>
         <td class="px-2 py-2 text-right">${fmtNum(c.ld)}</td>
-        <td class="px-2 py-2 text-right">${fmtINR(safeDiv(c.bud,c.vw))}</td>
+        <td class="px-2 py-2 text-right">₹${fmtDecimal(safeDiv(c.bud,c.vw))}</td>
         <td class="px-2 py-2 text-right">${fmtINR(safeDiv(c.bud,c.ld))}</td>
         <td class="px-2 py-2 text-right">${fmtINR(safeDiv(c.bud,bf))}</td>
       </tr>`; }).join("")}
