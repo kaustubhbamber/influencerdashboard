@@ -102,7 +102,7 @@
       <div class="lg:col-span-12 -mb-2 pt-3"><h2 class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Deep Dive Analytics</h2></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-8"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source → onboarded</h3><div class="flex gap-2"><button id="toggle-source-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-white hover:bg-zinc-100" data-view="country">By Country</button><button id="toggle-region-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-indigo-600 text-white hover:bg-indigo-700" data-view="region">By Region</button></div></div><div class="h-[420px]"><canvas id="ch-source-onboard"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Month-over-month growth</h3><span class="text-xs text-zinc-500">% change vs previous month</span></div><div class="h-[420px]"><canvas id="ch-mom"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Conversion rate by POC</h3><span class="text-xs text-zinc-500">onboards ÷ total prospects · all POCs</span></div><div class="h-[340px]"><canvas id="ch-conv"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Conversion rate by POC</h3><span class="text-xs text-zinc-500">all POCs</span></div><div class="h-[340px]"><canvas id="ch-conv"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Why we lose deals</h3><span class="text-xs text-zinc-500">lost reasons</span></div><div class="h-[340px]"><canvas id="ch-lost"></canvas></div></div>
     </section>
 
@@ -817,7 +817,7 @@ function renderProspectCharts(rows){
       contacted: sub.filter(r=>r.status==="Contacted").length,
       lost: sub.filter(r=>r.status==="Lost").length,
     };
-  }).filter(p=>p.total).sort((a,b)=>a.poc.localeCompare(b.poc));
+  }).filter(p=>p.total && p.poc !== "—").sort((a,b)=>a.poc.localeCompare(b.poc));
   upsertChart("ch-poc", {
     type:"bar",
     data:{ labels:pocList.map(p=>p.poc), datasets:[
@@ -852,7 +852,8 @@ function renderProspectCharts(rows){
       onClick: chartClickFilter("prospects","platform","filters-prospects"), onHover: cursorHover() },
   });
   // destinations
-  const destCounts = counts(rows,"destination").slice(0,12);
+  const DEST_EXCLUDE = new Set(["Others","Rest of World","Rest of the World"]);
+  const destCounts = counts(rows,"destination").filter(d => !DEST_EXCLUDE.has(d[0])).slice(0,12);
   upsertChart("ch-dest", {
     type:"bar",
     data:{ labels:destCounts.map(d=>d[0]), datasets:[{ data:destCounts.map(d=>d[1]), backgroundColor:"#6366f1", borderRadius:4 }] },
@@ -1115,21 +1116,22 @@ function renderVideoCharts(rows){
       onClick: chartClickFilter("videos","channel","filters-videos"), onHover: cursorHover() },
   });
 
-  // ----- Traffic distribution by platform -----
+  // ----- Traffic distribution by platform (donut) -----
   const trafficTotal = sumField(rows, "traffic");
-  const trafficPlatform = [...chData].sort((a,b)=>b.tr-a.tr);
+  const trafficPlatform = [...chData].filter(c => c.tr > 0).sort((a,b)=>b.tr-a.tr);
   upsertChart("vch-traffic-platform", {
-    type:"bar",
+    type:"doughnut",
     data:{ labels:trafficPlatform.map(c=>c.ch), datasets:[
-      { label:"Traffic", data:trafficPlatform.map(c=>c.tr), backgroundColor:PLATFORM_COLORS.slice(0, trafficPlatform.length), borderRadius:4 },
+      { label:"Traffic", data:trafficPlatform.map(c=>c.tr), backgroundColor:PLATFORM_COLORS.slice(0, trafficPlatform.length) },
     ]},
-    options:{ plugins:{ legend:{display:false},
-      tooltip:{ callbacks:{ afterLabel: ctx => {
-        const c = trafficPlatform[ctx.dataIndex];
-        const share = trafficTotal ? ((c.tr/trafficTotal)*100).toFixed(1) : "0";
-        return `${share}% of total traffic · ${c.n} videos`;
-      } } } },
-      scales:{ y:{ beginAtZero:true, title:{display:true,text:"Traffic"} } },
+    options:{ plugins:{ legend:{position:"bottom", labels:{boxWidth:10}},
+      tooltip:{ callbacks:{
+        label: ctx => `${ctx.label}: ${fmtNum(ctx.parsed)} traffic`,
+        afterLabel: ctx => {
+          const c = trafficPlatform[ctx.dataIndex];
+          const share = trafficTotal ? ((c.tr/trafficTotal)*100).toFixed(1) : "0";
+          return `${share}% of total · ${c.n} videos`;
+        } } } },
       onClick: chartClickFilter("videos","channel","filters-videos"), onHover: cursorHover() },
   });
 
