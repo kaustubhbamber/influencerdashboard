@@ -85,17 +85,25 @@
     <section id="kpi-row-prospects" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"></section>
 
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- Section 1 — Pipeline Health -->
+      <div class="lg:col-span-12 -mb-2 pt-1"><h2 class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Pipeline Health</h2></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Pipeline funnel</h3><span class="text-xs text-zinc-500">prospects by stage</span></div><div class="h-[260px]"><canvas id="ch-funnel"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Outreach over time</h3><span class="text-xs text-zinc-500">by month</span></div><div class="h-[260px]"><canvas id="ch-month"></canvas></div></div>
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-12"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Performance by POC</h3><span class="text-xs text-zinc-500">click a bar to drill in</span></div><div class="h-[520px]"><canvas id="ch-poc"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform mix</h3><span class="text-xs text-zinc-500">share of outreach</span></div><div class="h-[380px]"><canvas id="ch-platform"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform mix (onboarded)</h3><span class="text-xs text-zinc-500">share of partners onboarded</span></div><div class="h-[380px]"><canvas id="ch-platform-onboarded"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top destinations</h3><span class="text-xs text-zinc-500">where influencers are sent</span></div><div class="h-[280px]"><canvas id="ch-dest"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top source countries</h3><span class="text-xs text-zinc-500">overall count</span></div><div class="h-[280px]"><canvas id="ch-source"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source → onboarded</h3><div class="flex gap-2"><button id="toggle-source-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-white hover:bg-zinc-100" data-view="country">By Country</button><button id="toggle-region-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-indigo-600 text-white hover:bg-indigo-700" data-view="region">By Region</button></div></div><div class="h-[420px]"><canvas id="ch-source-onboard"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-5"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Month-over-month growth</h3><span class="text-xs text-zinc-500">% change vs previous month</span></div><div class="h-[420px]"><canvas id="ch-mom"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Conversion rate by POC</h3><span class="text-xs text-zinc-500">min 30 prospects</span></div><div class="h-[280px]"><canvas id="ch-conv"></canvas></div></div>
-      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-5"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Why we lose deals</h3><span class="text-xs text-zinc-500">lost reasons</span></div><div class="h-[280px]"><canvas id="ch-lost"></canvas></div></div>
+
+      <!-- Section 2 — Channel & Geography Mix -->
+      <div class="lg:col-span-12 -mb-2 pt-3"><h2 class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Channel & Geography Mix</h2></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform mix</h3><span class="text-xs text-zinc-500">share of outreach</span></div><div class="h-[340px]"><canvas id="ch-platform"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform mix (onboarded)</h3><span class="text-xs text-zinc-500">share of partners onboarded</span></div><div class="h-[340px]"><canvas id="ch-platform-onboarded"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top destinations</h3><span class="text-xs text-zinc-500">where influencers are sent</span></div><div class="h-[300px]"><canvas id="ch-dest"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top source countries</h3><span class="text-xs text-zinc-500">overall count</span></div><div class="h-[300px]"><canvas id="ch-source"></canvas></div></div>
+
+      <!-- Section 3 — Deep Dive Analytics -->
+      <div class="lg:col-span-12 -mb-2 pt-3"><h2 class="text-xs font-semibold uppercase tracking-wide text-zinc-500">Deep Dive Analytics</h2></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-8"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source → onboarded</h3><div class="flex gap-2"><button id="toggle-source-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-white hover:bg-zinc-100" data-view="country">By Country</button><button id="toggle-region-view" class="text-xs px-3 py-1 rounded border border-zinc-300 bg-indigo-600 text-white hover:bg-indigo-700" data-view="region">By Region</button></div></div><div class="h-[420px]"><canvas id="ch-source-onboard"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-4"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Month-over-month growth</h3><span class="text-xs text-zinc-500">% change vs previous month</span></div><div class="h-[420px]"><canvas id="ch-mom"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Conversion rate by POC</h3><span class="text-xs text-zinc-500">onboards ÷ total prospects · all POCs</span></div><div class="h-[340px]"><canvas id="ch-conv"></canvas></div></div>
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6"><div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Why we lose deals</h3><span class="text-xs text-zinc-500">lost reasons</span></div><div class="h-[340px]"><canvas id="ch-lost"></canvas></div></div>
     </section>
 
     <section class="bg-white rounded-xl border border-zinc-200">
@@ -152,32 +160,37 @@
       </div>
 
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7">
-        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Channel performance</h3><span class="text-xs text-zinc-500">spend vs leads · CPL annotated</span></div>
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Platform performance</h3><span class="text-xs text-zinc-500">traffic · leads · spend</span></div>
         <div class="h-[320px]"><canvas id="vch-channel"></canvas></div>
       </div>
 
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-5">
-        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Cost efficiency by channel</h3><span class="text-xs text-zinc-500">CPV · CPL · CPB</span></div>
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Cost efficiency by platform</h3><span class="text-xs text-zinc-500">CPV · CPL · CPB</span></div>
         <div class="overflow-x-auto"><table class="w-full text-xs" id="tbl-channel-eff"></table></div>
       </div>
 
+      <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-12">
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Traffic distribution by platform</h3><span class="text-xs text-zinc-500">share of total traffic each platform drove</span></div>
+        <div class="h-[320px]"><canvas id="vch-traffic-platform"></canvas></div>
+      </div>
+
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-7">
-        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">POC performance — leads & bookings</h3><span class="text-xs text-zinc-500">top 15 · click to drill</span></div>
-        <div class="h-[420px]"><canvas id="vch-poc"></canvas></div>
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">POC performance — leads & bookings</h3><span class="text-xs text-zinc-500">all POCs · click to drill</span></div>
+        <div class="h-[520px]"><canvas id="vch-poc"></canvas></div>
       </div>
 
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-5">
-        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top partners by leads</h3><span class="text-xs text-zinc-500">top 15</span></div>
-        <div class="h-[420px]"><canvas id="vch-partner"></canvas></div>
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Top partners by leads</h3><span class="text-xs text-zinc-500">top 30</span></div>
+        <div class="h-[700px]"><canvas id="vch-partner"></canvas></div>
       </div>
 
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6">
-        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source country → leads</h3><span class="text-xs text-zinc-500">top sources driving leads</span></div>
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Source country → leads</h3><span class="text-xs text-zinc-500">top sources driving traffic & leads</span></div>
         <div class="h-[320px]"><canvas id="vch-source"></canvas></div>
       </div>
 
       <div class="bg-white rounded-xl border border-zinc-200 p-4 lg:col-span-6">
-        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Destination → leads</h3><span class="text-xs text-zinc-500">where leads are going</span></div>
+        <div class="flex items-center justify-between mb-2"><h3 class="font-semibold text-sm">Destination → leads</h3><span class="text-xs text-zinc-500">where we are getting leads</span></div>
         <div class="h-[320px]"><canvas id="vch-dest"></canvas></div>
       </div>
     </section>
@@ -247,6 +260,8 @@ const STAGE_COLORS = {
 const PAID_AFF_MAP = {
   "paid":"Paid","affiliate":"Affiliate","aff":"Affiliate",
 };
+const PLATFORM_COLORS = ["#6366f1","#ec4899","#f59e0b","#06b6d4","#10b981","#8b5cf6","#ef4444","#64748b"];
+const EXCLUDED_POCS = new Set(["Mehak","Tanisha"]);
 const TARGET_REACHOUTS = 120;
 const TARGET_ONBOARDS = 4;
 
@@ -912,14 +927,15 @@ function renderProspectCharts(rows){
       tooltip:{ callbacks:{ label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y>=0?"+":""}${ctx.parsed.y}%` } } },
       scales:{ y:{ ticks:{ callback: v => v+"%" } } } },
   });
-  // conv by POC
-  const convList = pocList.filter(p=>p.total>=30).map(p=>({ poc:p.poc, rate:(p.onb/p.total)*100, total:p.total }))
+  // conv by POC — every POC, no min threshold; horizontal so all names visible
+  const convList = pocList.filter(p=>p.total>0).map(p=>({ poc:p.poc, rate:(p.onb/p.total)*100, total:p.total, onb:p.onb }))
     .sort((a,b)=>b.rate-a.rate);
   upsertChart("ch-conv", {
     type:"bar",
-    data:{ labels:convList.map(p=>p.poc), datasets:[{ label:"Conv %", data:convList.map(p=>+p.rate.toFixed(1)), backgroundColor:"#16a34a", borderRadius:4 }] },
-    options:{ plugins:{ tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.y}% (n=${convList[ctx.dataIndex].total})` } } },
-      scales:{ y:{ beginAtZero:true, ticks:{ callback:v => v+"%" } } } },
+    data:{ labels:convList.map(p=>p.poc), datasets:[{ label:"Conversion %", data:convList.map(p=>+p.rate.toFixed(1)), backgroundColor:"#16a34a", borderRadius:4 }] },
+    options:{ indexAxis:"y", plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{ label: ctx => `${ctx.parsed.x}%  ·  ${convList[ctx.dataIndex].onb} of ${convList[ctx.dataIndex].total}` } } },
+      scales:{ x:{ beginAtZero:true, ticks:{ callback:v => v+"%" } }, y:{ ticks:{autoSkip:false} } } },
   });
   // lost
   const lostCounts = counts(rows.filter(r=>r.lostReason),"lostReason").slice(0,10);
@@ -1077,25 +1093,43 @@ function renderVideoCharts(rows){
         y2:{ position:"right", beginAtZero:true, grid:{drawOnChartArea:false}, title:{display:true, text:"Traffic / Leads / Bookings"} } } },
   });
 
-  // ----- Channel performance -----
+  // ----- Platform performance (traffic · leads · spend) -----
   const channels = [...new Set(rows.map(r=>r.channel))].filter(c=>c && c!=="—");
   const chData = channels.map(c => {
     const sub = rows.filter(r=>r.channel===c);
-    return { ch:c, bud: sumField(sub,"budget"), vw: sumField(sub,"views"), ld: sumField(sub,"leads"), bk: sumField(sub,"bookings"), n: sub.length };
+    return { ch:c, bud: sumField(sub,"budget"), vw: sumField(sub,"views"), tr: sumField(sub,"traffic"), ld: sumField(sub,"leads"), bk: sumField(sub,"bookings"), n: sub.length };
   }).sort((a,b)=>b.ld-a.ld);
   upsertChart("vch-channel", {
     type:"bar",
     data:{ labels:chData.map(c=>c.ch), datasets:[
+      { label:"Traffic", data:chData.map(c=>c.tr), backgroundColor:"#0ea5e9", yAxisID:"y" },
       { label:"Leads", data:chData.map(c=>c.ld), backgroundColor:"#10b981", yAxisID:"y" },
-      { label:"Bookings", data:chData.map(c=>c.bk), backgroundColor:"#ec4899", yAxisID:"y" },
       { label:"Spend (₹L)", data:chData.map(c=>+(c.bud/1e5).toFixed(2)), backgroundColor:"#a78bfa", yAxisID:"y2" },
     ]},
     options:{ plugins:{ legend:{position:"bottom"},
       tooltip:{ callbacks:{ afterLabel: ctx => {
         if (ctx.dataset.label==="Leads"){ const c = chData[ctx.dataIndex]; return `CPL ${fmtINR(safeDiv(c.bud,c.ld))}`; }
         return ""; } } } },
-      scales:{ y:{position:"left", beginAtZero:true, title:{display:true,text:"Count"} },
+      scales:{ y:{position:"left", beginAtZero:true, title:{display:true,text:"Traffic / Leads"} },
         y2:{ position:"right", beginAtZero:true, grid:{drawOnChartArea:false}, title:{display:true, text:"Spend (₹ lakh)"} } },
+      onClick: chartClickFilter("videos","channel","filters-videos"), onHover: cursorHover() },
+  });
+
+  // ----- Traffic distribution by platform -----
+  const trafficTotal = sumField(rows, "traffic");
+  const trafficPlatform = [...chData].sort((a,b)=>b.tr-a.tr);
+  upsertChart("vch-traffic-platform", {
+    type:"bar",
+    data:{ labels:trafficPlatform.map(c=>c.ch), datasets:[
+      { label:"Traffic", data:trafficPlatform.map(c=>c.tr), backgroundColor:PLATFORM_COLORS.slice(0, trafficPlatform.length), borderRadius:4 },
+    ]},
+    options:{ plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{ afterLabel: ctx => {
+        const c = trafficPlatform[ctx.dataIndex];
+        const share = trafficTotal ? ((c.tr/trafficTotal)*100).toFixed(1) : "0";
+        return `${share}% of total traffic · ${c.n} videos`;
+      } } } },
+      scales:{ y:{ beginAtZero:true, title:{display:true,text:"Traffic"} } },
       onClick: chartClickFilter("videos","channel","filters-videos"), onHover: cursorHover() },
   });
 
@@ -1119,12 +1153,12 @@ function renderVideoCharts(rows){
       </tr>`; }).join("")}
     </tbody>`;
 
-  // ----- POC performance -----
-  const pocs = [...new Set(rows.map(r=>r.poc))];
+  // ----- POC performance — all POCs, exclude ex-team members -----
+  const pocs = [...new Set(rows.map(r=>r.poc))].filter(p => p && p !== "—" && !EXCLUDED_POCS.has(p));
   const pocData = pocs.map(p => {
     const sub = rows.filter(r=>r.poc===p);
     return { poc:p, ld: sumField(sub,"leads"), bk: sumField(sub,"bookings"), vw: sumField(sub,"views"), bud: sumField(sub,"budget"), n: sub.length };
-  }).filter(p=>p.n).sort((a,b)=>b.ld-a.ld||b.bk-a.bk).slice(0,15);
+  }).filter(p=>p.n).sort((a,b)=>b.ld-a.ld||b.bk-a.bk);
   upsertChart("vch-poc", {
     type:"bar",
     data:{ labels:pocData.map(p=>p.poc), datasets:[
@@ -1133,11 +1167,11 @@ function renderVideoCharts(rows){
     ]},
     options:{ indexAxis:"y", plugins:{ legend:{position:"bottom"},
       tooltip:{ callbacks:{ afterLabel: ctx => `Videos: ${pocData[ctx.dataIndex].n} · Spend ${fmtINR(pocData[ctx.dataIndex].bud)}` } } },
-      scales:{ x:{beginAtZero:true} },
+      scales:{ x:{beginAtZero:true}, y:{ticks:{autoSkip:false}} },
       onClick: chartClickFilter("videos","poc","filters-videos"), onHover: cursorHover() },
   });
 
-  // ----- Top partners -----
+  // ----- Top partners by leads — top 30 with proper label -----
   const partnerAgg = new Map();
   for (const r of rows){
     if (!r.partner) continue;
@@ -1145,47 +1179,52 @@ function renderVideoCharts(rows){
     cur.ld += r.leads; cur.vw += r.views; cur.bud += r.budget; cur.n += 1;
     partnerAgg.set(r.partner, cur);
   }
-  const partnerData = [...partnerAgg.entries()].map(([k,v]) => ({partner:k,...v})).sort((a,b)=>b.ld-a.ld).slice(0,15);
+  const partnerData = [...partnerAgg.entries()].map(([k,v]) => ({partner:k,...v})).sort((a,b)=>b.ld-a.ld).slice(0,30);
   upsertChart("vch-partner", {
     type:"bar",
-    data:{ labels:partnerData.map(p=>p.partner), datasets:[{ data:partnerData.map(p=>p.ld), backgroundColor:"#0ea5e9", borderRadius:4 }] },
-    options:{ indexAxis:"y", scales:{ x:{beginAtZero:true} },
-      plugins:{ tooltip:{ callbacks:{ afterLabel: ctx => `${fmtNum(partnerData[ctx.dataIndex].vw)} views · ${fmtINR(partnerData[ctx.dataIndex].bud)} spent` } } } },
+    data:{ labels:partnerData.map(p=>p.partner), datasets:[
+      { label:"Leads", data:partnerData.map(p=>p.ld), backgroundColor:"#0ea5e9", borderRadius:4 },
+    ]},
+    options:{ indexAxis:"y", plugins:{ legend:{display:false},
+      tooltip:{ callbacks:{
+        label: ctx => `Leads: ${fmtNum(ctx.parsed.x)}`,
+        afterLabel: ctx => `${fmtNum(partnerData[ctx.dataIndex].vw)} views · ${fmtINR(partnerData[ctx.dataIndex].bud)} spent` } } },
+      scales:{ x:{beginAtZero:true, title:{display:true,text:"Leads"} }, y:{ticks:{autoSkip:false}} } },
   });
 
-  // ----- Source -> leads -----
+  // ----- Source -> traffic + leads -----
   const sourceAgg = new Map();
   for (const r of rows){
     if (!r.source || r.source === "—") continue;
-    const cur = sourceAgg.get(r.source) || { ld:0, vw:0, bk:0 };
-    cur.ld += r.leads; cur.vw += r.views; cur.bk += r.bookings;
+    const cur = sourceAgg.get(r.source) || { ld:0, tr:0 };
+    cur.ld += r.leads; cur.tr += r.traffic;
     sourceAgg.set(r.source, cur);
   }
   const sourceData = [...sourceAgg.entries()].map(([k,v])=>({k,...v})).sort((a,b)=>b.ld-a.ld).slice(0,12);
   upsertChart("vch-source", {
     type:"bar",
     data:{ labels:sourceData.map(s=>s.k), datasets:[
+      { label:"Traffic", data:sourceData.map(s=>s.tr), backgroundColor:"#0ea5e9" },
       { label:"Leads", data:sourceData.map(s=>s.ld), backgroundColor:"#10b981" },
-      { label:"Bookings", data:sourceData.map(s=>s.bk), backgroundColor:"#ec4899" },
     ]},
     options:{ plugins:{ legend:{position:"bottom"} }, scales:{ y:{beginAtZero:true} },
       onClick: chartClickFilter("videos","source","filters-videos"), onHover: cursorHover() },
   });
 
-  // ----- Destination -> leads -----
+  // ----- Destination -> traffic + leads -----
   const destAgg = new Map();
   for (const r of rows){
     if (!r.destination || r.destination === "—") continue;
-    const cur = destAgg.get(r.destination) || { ld:0, bk:0 };
-    cur.ld += r.leads; cur.bk += r.bookings;
+    const cur = destAgg.get(r.destination) || { ld:0, tr:0 };
+    cur.ld += r.leads; cur.tr += r.traffic;
     destAgg.set(r.destination, cur);
   }
   const destData = [...destAgg.entries()].map(([k,v])=>({k,...v})).sort((a,b)=>b.ld-a.ld).slice(0,12);
   upsertChart("vch-dest", {
     type:"bar",
     data:{ labels:destData.map(d=>d.k), datasets:[
+      { label:"Traffic", data:destData.map(d=>d.tr), backgroundColor:"#0ea5e9" },
       { label:"Leads", data:destData.map(d=>d.ld), backgroundColor:"#10b981" },
-      { label:"Bookings", data:destData.map(d=>d.bk), backgroundColor:"#ec4899" },
     ]},
     options:{ plugins:{ legend:{position:"bottom"} }, scales:{ y:{beginAtZero:true} },
       onClick: chartClickFilter("videos","destination","filters-videos"), onHover: cursorHover() },
